@@ -8,8 +8,6 @@ from tkinter.filedialog import *
 from tkinter import messagebox
 from tkinterdnd2 import DND_FILES, TkinterDnD
 from PIL import ImageTk, Image
-import os
-
 
 
 
@@ -870,7 +868,6 @@ class SaveOption():
 
 def main():
 
-
     root = TkinterDnD.Tk()
     scrWidth = root.winfo_screenwidth()
     scrHeight = root.winfo_screenheight()
@@ -882,5 +879,7 @@ def main():
     app = MainApp(root)
     root.mainloop()
 
-main()
+
+if __name__ == '__main__':
+    main()
 
