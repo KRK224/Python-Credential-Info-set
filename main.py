@@ -273,7 +273,7 @@ class MainApp():
 
         try:
             for i in range(len(self._accountData)):
-                print("i: " + str(i))
+                print("i: " + str(i) + "번째 파일 작성 시작")
                 for accCol in self._writeOptDict.keys():
                     print("accCol: " + str(accCol))
                     for sheets in self._writeOptDict[accCol].keys():
@@ -292,6 +292,7 @@ class MainApp():
 
                 if (self.saveOpt[1][1] == "Disabled" or self.saveOpt[1][1] == "UnSelected"):
                     continue
+
                 # password setting.
                 save_name_bs = MainApp.changeSlash(save_name_s)
                 print("save path back slash: ", end="")
@@ -308,7 +309,7 @@ class MainApp():
                         wb2 = excel.Workbooks.Open(save_name_bs, Password=self._accountData[self.saveOpt[1][1]][0])
                         wb2.SaveAs(save_name_bs, 51, self._accountData[self.saveOpt[1][1]][i])
 
-                    print(str(i) + "번째의 " + "password decrption Working Good")
+                    print(str(i) + "번째 파일 " + "password decrption has been completed")
                     wb2.Close()
                     excel.Application.Quit()
 
@@ -319,6 +320,7 @@ class MainApp():
                     excel.Application.Quit()
                     return 1
 
+            messagebox.showinfo("Info", "All excel files has been created")
         except Exception as e:
             print(e)
             return 1
