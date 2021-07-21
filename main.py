@@ -188,7 +188,7 @@ class MainApp():
             return 0
 
         except Exception as e:
-            print(e)
+            messagebox.showinfo("Warning", e)
 
 
     # Load Option class의 Clear button과 binding
@@ -215,6 +215,7 @@ class MainApp():
 
         except Exception as e:
             print(e)
+            messagebox.showinfo('Warning', e)
 
         finally:
             self._pathInfo = dict()  # 파일 위치 정보 - 딕셔너리
@@ -309,19 +310,21 @@ class MainApp():
                         wb2 = excel.Workbooks.Open(save_name_bs, Password=self._accountData[self.saveOpt[1][1]][0])
                         wb2.SaveAs(save_name_bs, 51, self._accountData[self.saveOpt[1][1]][i])
 
-                    print(str(i) + "번째 파일 " + "password decrption has been completed")
+                    print(str(i) + "번째 파일 " + "password encryption has been completed")
                     wb2.Close()
                     excel.Application.Quit()
 
 
                 except Exception as e:
                     print(e)
+                    messagebox.showinfo('Warning - Password encryption', e)
                     wb2 = None
                     excel.Application.Quit()
                     return 1
 
             messagebox.showinfo("Info", "All excel files has been created")
         except Exception as e:
+            messagebox.showinfo("Warning",e)
             print(e)
             return 1
 
@@ -441,7 +444,7 @@ class LoadOption():
             print(e)
         event.widget.insert("end", path)
 
-    ## Brwose Button Callback 함수
+    ## Browse Button Callback 함수
 
     def browseCallback(self, event):
         # get widget name
@@ -542,38 +545,40 @@ class WriteOption():
     # Apply Button을 눌렀을 때 호출될 함수
 
     def applyWriteOption(self, event):
-
-        if(not self.mainApp.saveObj):
-            print("SaveObj is empty!")
-        else:
-            self.mainApp.saveObj.__del__()
-            self.mainApp.saveObj = None
-            print(len(gc.get_objects()))
-            gc.collect()
-            print(len(gc.get_objects()))
-
-        transferDict = dict()
-
-        for insObj in self.canvasObj._insertObjList:
-            sheetDict = dict()
-            if (insObj.myCheckVar.get() == 0):
-                continue;
+        try:
+            if(not self.mainApp.saveObj):
+                print("SaveObj is empty!")
             else:
-                for sheetIdx, sheetEntry in enumerate(insObj._entryList):
-                    if (not sheetEntry.get()):
-                        continue;
-                    sheetDict[sheetIdx] = sheetEntry.get()
-                transferDict[insObj.idx] = sheetDict
-                print(insObj.idx, end=" : ")
-                print(transferDict[insObj.idx])
+                self.mainApp.saveObj.__del__()
+                self.mainApp.saveObj = None
+                print(len(gc.get_objects()))
+                gc.collect()
+                print(len(gc.get_objects()))
 
-        self.mainApp.writeOptDict = transferDict;
-        print(self.mainApp.writeOptDict)
+            transferDict = dict()
 
-        self.mainApp.callSaveOption()
+            for insObj in self.canvasObj._insertObjList:
+                sheetDict = dict()
+                if (insObj.myCheckVar.get() == 0):
+                    continue;
+                else:
+                    for sheetIdx, sheetEntry in enumerate(insObj._entryList):
+                        if (not sheetEntry.get()):
+                            continue;
+                        sheetDict[sheetIdx] = sheetEntry.get()
+                    transferDict[insObj.idx] = sheetDict
+                    print(insObj.idx, end=" : ")
+                    print(transferDict[insObj.idx])
 
-        return 0
+            self.mainApp.writeOptDict = transferDict;
+            print(self.mainApp.writeOptDict)
 
+            self.mainApp.callSaveOption()
+
+            return 0
+
+        except Exception as e:
+            messagebox.showinfo("Warning", e)
 
 # ---------------------- Scrollerable Canvas class --------------------------
 
@@ -820,14 +825,18 @@ class SaveOption():
             print("saveFrame widget has been deleted!")
 
     def enablePW(self):
-        if (self.pwCheckVar.get() == 0):
-            self.p_fieldListBox['state'] = "disabled"
-            self.statusList[1] = "Disabled"
-        else:
-            self.p_fieldListBox['state'] = "normal"
-            self.statusList[1] = "UnSelected"
-        self.textVariable = "Naming Format: {0}\nPassword Format: {1}".format(self.statusList[0], self.statusList[1])
-        self.infoLabel["text"] = self.textVariable
+        try:
+            if (self.pwCheckVar.get() == 0):
+                self.p_fieldListBox['state'] = "disabled"
+                self.statusList[1] = "Disabled"
+            else:
+                self.p_fieldListBox['state'] = "normal"
+                self.statusList[1] = "UnSelected"
+            self.textVariable = "Naming Format: {0}\nPassword Format: {1}".format(self.statusList[0], self.statusList[1])
+            self.infoLabel["text"] = self.textVariable
+
+        except Exception as e:
+            print(e)
 
     def printSelected(self, event):
 
@@ -847,23 +856,27 @@ class SaveOption():
         self.infoLabel["text"] = self.textVariable
 
     def save(self, event):
+        try:
 
-        if (not not self.pathEntry.get()):
+            if (not not self.pathEntry.get()):
 
-            if (self.pathEntry.get()[-1] != "/"):
-                self.pathEntry.insert(END, "/")
+                if (self.pathEntry.get()[-1] != "/"):
+                    self.pathEntry.insert(END, "/")
 
-        pathForm = self.pathEntry.get() + self.formEntry.get()
-        print(pathForm)
+            pathForm = self.pathEntry.get() + self.formEntry.get()
+            print(pathForm)
 
-        saveOptTemp = [pathForm, self.statusList]
-        print(saveOptTemp)
-        self.mainApp.saveOpt = saveOptTemp
-        print(self.mainApp.saveOpt)
+            saveOptTemp = [pathForm, self.statusList]
+            print(saveOptTemp)
+            self.mainApp.saveOpt = saveOptTemp
+            print(self.mainApp.saveOpt)
 
-        # write excel function call
+            # write excel function call
 
-        self.mainApp.saveCredential();
+            self.mainApp.saveCredential()
+
+        except Exception as e:
+            messagebox.showinfo('Warning', e)
 
 
 # ================================= main 함수 ====================================
