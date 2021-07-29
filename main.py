@@ -878,8 +878,64 @@ class SaveOption():
         except Exception as e:
             messagebox.showinfo('Warning', e)
 
+        def saveCredential(self):
 
-# ================================= main 함수 ====================================
+            try:
+                for i in range(len(self._accountData)):
+                    print("i: " + str(i))
+                    for accCol in self._writeOptDict.keys():
+                        print("accCol: " + str(accCol))
+                        for sheets in self._writeOptDict[accCol].keys():
+                            print("sheets: " + str(sheets))
+                            cellList = (self._writeOptDict[accCol][sheets].split(","))
+                            ws = self._wb[self._wbSheets[sheets]]
+
+                            for cell in cellList:
+                                cell = cell.strip(" ")
+                                print(self._accountData)
+                                print(self._accountData[self._accColList[accCol]][i])
+                                ws[cell] = self._accountData[self._accColList[accCol]][i]
+                    save_name_s = self.saveOpt[0].format(self._accountData[self.saveOpt[1][0]][i])
+                    self._wb.save(save_name_s)
+                    self._wb.close()
+
+                    if (self.saveOpt[1][1] == "Disabled" or self.saveOpt[1][1] == "UnSelected"):
+                        continue;
+                    # password setting.
+                    save_name_bs = MainApp.changeSlash(save_name_s)
+                    print("save path back slash: ", end="")
+                    print(save_name_bs)
+                    try:
+                        excel = win32.gencache.EnsureDispatch('Excel.Application')
+                        excel.Visible = True
+                        excel.DisplayAlerts = False
+                        print(excel)
+                        if (i == 0):
+                            wb2 = excel.Workbooks.Open(save_name_bs)
+                            wb2.SaveAs(save_name_bs, 51, self._accountData[self.saveOpt[1][1]][i])
+                        else:
+                            wb2 = excel.Workbooks.Open(save_name_bs, Password=self._accountData[self.saveOpt[1][1]][0])
+                            wb2.SaveAs(save_name_bs, 51, self._accountData[self.saveOpt[1][1]][i])
+
+                        print(str(i) + "번째의 " + "password decrption Working Good")
+                        wb2.Close()
+                        excel.Application.Quit()
+
+
+                    except Exception as e:
+                        print(e)
+                        wb2 = None
+                        excel.Application.Quit()
+                        return 1;
+
+            except Exception as e:
+                print(e)
+                return 1;
+
+            return 0;
+
+
+            # ================================= main 함수 ====================================
 
 def main():
 
